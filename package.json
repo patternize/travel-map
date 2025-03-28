@@ -1,0 +1,109 @@
+{
+  "name": "@patternize/travel-map",
+  "description": "Maps travel history onto an interactive globe",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:patternize/travel-map.git"
+  },
+  "homepage": "https://github.com/patternize/travel-map#readme",
+  "bugs": {
+    "url": "https://github.com/patternize/travel-map/issues"
+  },
+  "keywords": [
+    "react",
+    "map",
+    "globe",
+    "visualization",
+    "travel"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "unpkg": "./dist/umd/index.js",
+  "jsdelivr": "./dist/umd/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "start": "storybook dev -p 6006",
+    "clean": "rm -rf dist",
+    "prebuild": "yarn clean",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "build:umd": "webpack --config webpack.config.js",
+    "build": "yarn clean && yarn build:esm && yarn build:cjs && yarn build:umd",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "build-storybook": "storybook build",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "publish": "yarn build && npm publish"
+  },
+  "dependencies": {
+    "@react-spring/web": "^9.7.5",
+    "@types/mapbox-gl": "^3.4.1",
+    "gsap": "^3.12.7",
+    "mapbox-gl": "^3.10.0",
+    "react-jss": "^10.5.0",
+    "react-map-gl": "^8.0.1",
+    "react-scripts": "^5.0.1",
+    "react-spring": "^9.7.4",
+    "react-use-gesture": "^9.1.3",
+    "react-use-measure": "^2.1.7",
+    "resize-observer-polyfill": "^1.5.1"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^8.3.6",
+    "@storybook/addon-essentials": "^8.3.6",
+    "@storybook/addon-links": "^8.3.6",
+    "@storybook/node-logger": "^8.1.0",
+    "@storybook/preset-create-react-app": "^8.3.6 ",
+    "@storybook/react": "^8.3.6",
+    "@storybook/react-webpack5": "^8.3.6",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^12.20.55",
+    "@types/react-map-gl": "^6.1.7",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/parser": "^8.11.0",
+    "dotenv": "^16.4.7",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jest": "^28.5.0",
+    "eslint-plugin-jsx-a11y": "^6.10.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "prettier": "^3.3.3",
+    "storybook": "^8.3.2",
+    "ts-loader": "^9.5.2",
+    "typescript": "^4",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "none"
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  }
+}
