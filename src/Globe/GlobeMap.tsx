@@ -3,8 +3,85 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
 // Import from specific subpath as required by react-map-gl v8+
 import Map, { Marker, NavigationControl, Popup } from 'react-map-gl/mapbox';
-import BounceCards from './BounceCards';
-import './GlobeMap.css';
+import BounceCards from '../BounceCards/BounceCards';
+import { createUseStyles } from 'react-jss';
+
+const useStyles = createUseStyles({
+  globeMapContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'relative'
+  },
+  globeMap: {
+    width: '100%',
+    height: '100%'
+  },
+  globeMapMarker: {
+    width: 14,
+    height: 14,
+    borderRadius: '50%',
+    backgroundColor: '#ffffff',
+    border: '2px solid rgba(0, 0, 0, 0.5)',
+    cursor: 'pointer',
+    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+    transition: 'transform 0.2s ease-in-out',
+    '&:hover': {
+      transform: 'scale(1.2)'
+    },
+    '&.selected': {
+      transform: 'scale(1.5)'
+    }
+  },
+  globeMapPopup: {
+    maxWidth: 300
+  },
+  globeMapPopupTitle: {
+    margin: '0 0 5px 0',
+    fontSize: 16
+  },
+  globeMapPopupDescription: {
+    margin: 0
+  },
+  globeMapPopupCoordinates: {
+    marginTop: 5,
+    fontSize: 12,
+    color: '#666'
+  },
+  globeMapControls: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    background: 'rgba(0, 0, 0, 0.5)',
+    padding: 5,
+    borderRadius: 4,
+    color: 'white',
+    fontSize: 12
+  },
+  globeMapBounceCardsContainer: {
+    position: 'absolute',
+    bottom: 30,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 10,
+    pointerEvents: 'none'
+  },
+  globeMapBounceCards: {
+    pointerEvents: 'auto',
+    '& .card-0, & .card-1, & .card-2, & .card-3, & .card-4': {
+      border: '5px solid rgba(255, 255, 255, 0.9)',
+      boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)'
+    }
+  },
+  // Hide Mapbox logo and attribution
+  '@global': {
+    '.mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib': {
+      display: 'none !important'
+    },
+    '.mapboxgl-ctrl-attrib-inner': {
+      display: 'none !important'
+    }
+  }
+});
 
 // Define the prop types for the GlobeMap component
 interface MarkerData {
@@ -55,6 +132,7 @@ export function GlobeMap({
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
   const [showCards, setShowCards] = useState(false);
   const mapRef = useRef(null);
+  const classes = useStyles();
   console.log(showCards);
 
   // Default images to use if marker doesn't provide any
@@ -148,7 +226,7 @@ export function GlobeMap({
             latitude={marker.latitude}
           >
             <div
-              className={`globe-map-marker ${selectedMarker?.id === marker.id ? 'selected' : ''}`}
+              className={`${classes.globeMapMarker} ${selectedMarker?.id === marker.id ? 'selected' : ''}`}
               style={{
                 width: marker.size ? `${marker.size}px` : undefined,
                 height: marker.size ? `${marker.size}px` : undefined,
@@ -170,16 +248,16 @@ export function GlobeMap({
             closeButton={true}
             closeOnClick={false}
           >
-            <div className="globe-map-popup">
+            <div className={classes.globeMapPopup}>
               {selectedMarker.name && (
-                <h3 className="globe-map-popup-title">{selectedMarker.name}</h3>
+                <h3 className={classes.globeMapPopupTitle}>{selectedMarker.name}</h3>
               )}
               {selectedMarker.description && (
-                <p className="globe-map-popup-description">
+                <p className={classes.globeMapPopupDescription}>
                   {selectedMarker.description}
                 </p>
               )}
-              <div className="globe-map-popup-coordinates">
+              <div className={classes.globeMapPopupCoordinates}>
                 {selectedMarker.latitude.toFixed(4)},{' '}
                 {selectedMarker.longitude.toFixed(4)}
               </div>
@@ -190,15 +268,14 @@ export function GlobeMap({
 
       {/* Bounce Cards */}
       {showBounceCards && showCards && selectedMarker && (
-        <div className="globe-map-bounce-cards-container">
+        <div className={classes.globeMapBounceCardsContainer}>
           <BounceCards
-            className="globe-map-bounce-cards"
+            className={classes.globeMapBounceCards}
             images={selectedMarker.images || defaultImages}
             containerWidth={500}
             containerHeight={250}
             animationDelay={0.2}
             animationStagger={0.08}
-            easeType="elastic.out(1, 0.5)"
             transformStyles={defaultTransformStyles}
             enableHover={true}
           />
