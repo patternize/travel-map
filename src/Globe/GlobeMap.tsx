@@ -168,9 +168,12 @@ export function GlobeMap({
   );
 
   // Close popup and cards when clicking on the map
-  const handleMapClick = useCallback(() => {
-    // setSelectedMarker(null);
-    // setShowCards(false);
+  const handleMapClick = useCallback((event) => {
+    // Check if the click is directly on the map (not on a marker)
+    if (event.originalEvent && event.originalEvent.target.classList.contains('mapboxgl-canvas')) {
+      setSelectedMarker(null);
+      setShowCards(false);
+    }
   }, []);
 
   // Reset cards when selected marker changes
@@ -208,7 +211,7 @@ export function GlobeMap({
         projection="globe"
         attributionControl={false}
         fog={{
-          color: 'rgb(180, 53, 157)',
+          color: 'rgb(180, 53, 157)', 
           'high-color': 'rgb(137, 150, 180)',
           'horizon-blend': 0.1,
           'space-color': 'rgb(168, 168, 171)',
