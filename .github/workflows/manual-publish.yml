@@ -34,7 +34,6 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'yarn'
           scope: '@patternize'
 
       - name: Configure Git
@@ -43,7 +42,7 @@ jobs:
           git config --global user.email "actions@github.com"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Set version
         id: set-version
@@ -53,19 +52,18 @@ jobs:
               echo "Custom version was selected but no version was provided"
               exit 1
             fi
-            yarn version --new-version ${{ github.event.inputs.customVersion }} --no-git-tag-version
+            npm version ${{ github.event.inputs.customVersion }} --no-git-tag-version
           else
-            yarn version --${{ github.event.inputs.version }} --no-git-tag-version
+            npm version ${{ github.event.inputs.version }} --no-git-tag-version
           fi
           echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Publish to npm
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-          yarn publish --non-interactive || {
+          npm publish || {
             if grep -q "You cannot publish over the previously published versions" <<< "$(cat /home/runner/.npm/_logs/*-debug-0.log)"; then
               echo "Version already exists on npm - treating as success"
               exit 0
