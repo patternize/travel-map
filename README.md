@@ -78,15 +78,23 @@ interface MarkerData {
 ```
 
 ### Publishing
-1. Bump version:
+
+This repository is set up with GitHub Actions workflows for automated publishing:
+
+1. **Tag-based publishing**: When you push a tag with the format `v*.*.*` (e.g., `v0.1.2`), GitHub Actions will automatically build and publish the package to npm.
 ```bash
 npm version patch
-```
-
-2. Push changes with tags:
-```bash
 git push --follow-tags
 ```
+
+2. **Manual workflow**: You can also trigger a manual publish from the GitHub Actions tab:
+   - Go to the "Actions" tab in your GitHub repository
+   - Select "Manual Publish to npm" workflow
+   - Click "Run workflow"
+   - Choose the version increment type (patch, minor, major) or enter a custom version
+   - The workflow will update the version, build, and publish to npm
+
+> Note: Both workflows require an NPM_TOKEN secret to be set in your GitHub repository settings.
 
 ## License
 
