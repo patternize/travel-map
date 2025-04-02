@@ -1,5 +1,5 @@
 import { gsap } from 'gsap';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
@@ -13,7 +13,8 @@ const useStyles = createUseStyles({
   },
   card: {
     position: 'absolute',
-    width: 200, // Default width, will be overridden in component
+    width: 200,
+    height: 200,
     border: '5px solid #fff',
     borderRadius: 25,
     overflow: 'hidden',
@@ -36,8 +37,7 @@ export interface BounceCardsProps {
   easeType?: string;
   transformStyles?: string[];
   enableHover?: boolean;
-  maxCardWidth?: number;
-  maxCardHeight?: number;
+  cardSize?: number;
 }
 
 export default function BounceCards({
@@ -56,31 +56,10 @@ export default function BounceCards({
     'rotate(2deg) translate(170px)'
   ],
   enableHover = true,
-  maxCardWidth = 220,
-  maxCardHeight = 220
+  cardSize = 200
 }: BounceCardsProps) {
   const classes = useStyles();
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [imageDimensions, setImageDimensions] = useState<Array<{width: number, height: number}>>([]);
-  
-  // Preload images to get their dimensions
-  useEffect(() => {
-    const loadImage = (src: string, index: number) => {
-      const img = new Image();
-      img.onload = () => {
-        setImageDimensions(prev => {
-          const newDimensions = [...prev];
-          newDimensions[index] = { width: img.width, height: img.height };
-          return newDimensions;
-        });
-      };
-      img.src = src;
-    };
-    
-    images.forEach((src, index) => {
-      loadImage(src, index);
-    });
-  }, [images]);
 
   useEffect(() => {
     cardsRef.current = cardsRef.current.slice(0, images.length);
@@ -98,40 +77,6 @@ export default function BounceCards({
       }
     );
   }, [animationStagger, easeType, animationDelay]);
-
-  // Helper function to calculate dimensions based on aspect ratio
-  const getCardDimensions = (index: number) => {
-    const dimensions = imageDimensions[index];
-    
-    if (!dimensions) {
-      return { width: maxCardWidth, height: maxCardWidth }; // Default square if dimensions not available yet
-    }
-    
-    const { width, height } = dimensions;
-    const aspectRatio = width / height;
-    
-    // For portrait images (taller than wide)
-    if (aspectRatio < 0.8) {
-      return {
-        width: Math.min(maxCardHeight * aspectRatio, maxCardWidth),
-        height: maxCardHeight
-      };
-    }
-    // For landscape images (wider than tall)
-    else if (aspectRatio > 1.25) {
-      return {
-        width: maxCardWidth,
-        height: Math.min(maxCardWidth / aspectRatio, maxCardHeight)
-      };
-    }
-    // For relatively square images
-    else {
-      return {
-        width: maxCardWidth,
-        height: maxCardWidth
-      };
-    }
-  };
 
   const getNoRotationTransform = (transformStr: string) => {
     const hasRotate = /rotate\([\s\S]*?\)/.test(transformStr);
@@ -170,7 +115,7 @@ export default function BounceCards({
       if (i === hoveredIdx) {
         const noRotationTransform = getNoRotationTransform(baseTransform);
         gsap.to(cardsRef.current[i], {
-          transform: `${noRotationTransform} scale(1.2)`,
+          transform: `${noRotationTransform} scale(1.5)`,
           duration: 0.4,
           ease: 'back.out(1.4)',
           overwrite: 'auto'
@@ -218,28 +163,25 @@ export default function BounceCards({
         height: containerHeight
       }}
     >
-      {images.map((src, idx) => {
-        const cardDimensions = getCardDimensions(idx);
-        return (
-          <div
-            key={idx}
-            ref={(el) => {
-              cardsRef.current[idx] = el;
-            }}
-            className={`${classes.card} card-${idx}`}
-            data-card-index={idx}
-            style={{
-              transform: transformStyles[idx] ?? 'none',
-              width: cardDimensions.width,
-              height: cardDimensions.height
-            }}
-            onMouseEnter={() => pushSiblings(idx)}
-            onMouseLeave={resetSiblings}
-          >
-            <img className={classes.image} src={src} alt={`card-${idx}`} />
-          </div>
-        );
-      })}
+      {images.map((src, idx) => (
+        <div
+          key={idx}
+          ref={(el) => {
+            cardsRef.current[idx] = el;
+          }}
+          className={`${classes.card} card-${idx}`}
+          data-card-index={idx}
+          style={{
+            transform: transformStyles[idx] ?? 'none',
+            width: cardSize,
+            height: cardSize
+          }}
+          onMouseEnter={() => pushSiblings(idx)}
+          onMouseLeave={resetSiblings}
+        >
+          <img className={classes.image} src={src} alt={`card-${idx}`} />
+        </div>
+      ))}
     </div>
   );
 }

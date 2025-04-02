@@ -21,9 +21,9 @@ const useStyles = createUseStyles({
     height: 14,
     borderRadius: '50%',
     backgroundColor: '#ffffff',
-    border: '2px solid rgba(0, 0, 0, 0.5)',
+    border: '2px solid rgba(255, 255, 255, 0.8)',
     cursor: 'pointer',
-    boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 0 8px rgba(255, 255, 255, 0.5)',
     transition: 'transform 0.2s ease-in-out',
     '&:hover': {
       transform: 'scale(1.2)'
@@ -112,6 +112,24 @@ export interface GlobeMapProps {
   interactiveMarkers?: boolean;
   showBounceCards?: boolean; // New prop to control bounce cards feature
 }
+
+// Add this function before the GlobeMap component
+const calculateColorFromCoordinates = (longitude: number, latitude: number): string => {
+  // Normalize coordinates to 0-360 range for hue
+  const normalizedLongitude = ((longitude + 180) % 360);
+  const normalizedLatitude = ((latitude + 90) % 180);
+  
+  // Use longitude for hue (0-360)
+  const hue = normalizedLongitude;
+  
+  // Use latitude for saturation (30-70%)
+  const saturation = 30 + (normalizedLatitude / 180) * 40;
+  
+  // Use a fixed lightness for consistency
+  const lightness = 55;
+  
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+};
 
 export function GlobeMap({
   width = '100%',
@@ -211,7 +229,7 @@ export function GlobeMap({
         projection="globe"
         attributionControl={false}
         fog={{
-          color: 'rgb(180, 53, 157)', 
+          color: 'rgb(182, 37, 155)', 
           'high-color': 'rgb(137, 150, 180)',
           'horizon-blend': 0.1,
           'space-color': 'rgb(168, 168, 171)',
@@ -233,7 +251,7 @@ export function GlobeMap({
               style={{
                 width: marker.size ? `${marker.size}px` : undefined,
                 height: marker.size ? `${marker.size}px` : undefined,
-                backgroundColor: marker.color || undefined
+                backgroundColor: marker.color || calculateColorFromCoordinates(marker.longitude, marker.latitude)
               }}
               onClick={
                 interactiveMarkers ? () => handleMarkerClick(marker) : undefined

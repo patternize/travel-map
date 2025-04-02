@@ -2,7 +2,6 @@
 
 [![npm version](https://img.shields.io/npm/v/@patternize/travel-map.svg)](https://www.npmjs.com/package/@patternize/travel-map)
 [![npm downloads](https://img.shields.io/npm/dm/@patternize/travel-map.svg)](https://www.npmjs.com/package/@patternize/travel-map)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@patternize/travel-map)](https://bundlephobia.com/package/@patternize/travel-map)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ![](./demo.gif)
