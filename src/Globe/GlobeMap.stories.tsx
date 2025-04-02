@@ -66,7 +66,12 @@ CustomStyling.args = {
         'https://carlrocks.com/assets/images/prague2-7cfa719e695cf5a70189a1f04e962fcb.jpg', // River and forest
         'https://carlrocks.com/assets/images/bridge2-97fdff535d74995897b5e2af59f9e023.jpg', // Nature landscape
         'https://carlrocks.com/assets/images/clock2-c6eb3e18a6a8197c40941e3fba671db2.jpg', // Mountain and lake
-        'https://carlrocks.com/assets/images/church-842d95a972602c9b593446e924fc8eb0.JPG' // Birds on a branch
+        'https://carlrocks.com/assets/images/church-842d95a972602c9b593446e924fc8eb0.JPG', // Birds on a branch
+        'https://picsum.photos/id/1011/600/600', // Girl with a camera
+        'https://picsum.photos/id/1012/600/600', // Person looking at mountains
+        'https://picsum.photos/id/1027/600/600', // Man in the desert
+        'https://picsum.photos/id/1035/600/600', // Desert landscape
+        'https://picsum.photos/id/1039/600/600' // City skyline
       ]
     },
     {

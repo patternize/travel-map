@@ -80,6 +80,67 @@ const useStyles = createUseStyles({
     '.mapboxgl-ctrl-attrib-inner': {
       display: 'none !important'
     }
+  },
+  modal: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    cursor: 'pointer'
+  },
+  modalImage: {
+    maxWidth: '90vw',
+    maxHeight: '90vh',
+    objectFit: 'contain',
+    borderRadius: 8
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    color: 'white',
+    fontSize: 30,
+    cursor: 'pointer',
+    width: 40,
+    height: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '50%',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.2)'
+    }
+  },
+  navButton: {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: 'white',
+    fontSize: 40,
+    cursor: 'pointer',
+    width: 60,
+    height: 60,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '50%',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.2)'
+    },
+    '&.prev': {
+      left: 20
+    },
+    '&.next': {
+      right: 20
+    }
   }
 });
 
@@ -131,6 +192,14 @@ const calculateColorFromCoordinates = (longitude: number, latitude: number): str
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 };
 
+// Add this function before the GlobeMap component
+const getRandomImages = (images: string[], count: number = 5): string[] => {
+  if (images.length <= count) return images;
+  
+  const shuffled = [...images].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
 export function GlobeMap({
   width = '100%',
   height = 500,
@@ -149,6 +218,8 @@ export function GlobeMap({
   const [viewState, setViewState] = useState(initialViewState);
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
   const [showCards, setShowCards] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const mapRef = useRef(null);
   const classes = useStyles();
   console.log(showCards);
@@ -197,7 +268,7 @@ export function GlobeMap({
   // Reset cards when selected marker changes
   useEffect(() => {
     if (!selectedMarker) {
-      // setShowCards(false);
+      setShowCards(false);
     }
   }, [selectedMarker]);
 
@@ -214,6 +285,39 @@ export function GlobeMap({
 
     return () => clearInterval(rotationInterval);
   }, [enableAnimation]);
+
+  const handleModalClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setSelectedImage(null);
+    }
+  };
+
+  const handleCloseClick = () => {
+    setSelectedImage(null);
+  };
+
+  const handleImageClick = (src: string) => {
+    const images = selectedMarker?.images || defaultImages;
+    const index = images.indexOf(src);
+    setCurrentImageIndex(index);
+    setSelectedImage(src);
+  };
+
+  const handlePrevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const images = selectedMarker?.images || defaultImages;
+    const newIndex = (currentImageIndex - 1 + images.length) % images.length;
+    setCurrentImageIndex(newIndex);
+    setSelectedImage(images[newIndex]);
+  };
+
+  const handleNextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const images = selectedMarker?.images || defaultImages;
+    const newIndex = (currentImageIndex + 1) % images.length;
+    setCurrentImageIndex(newIndex);
+    setSelectedImage(images[newIndex]);
+  };
 
   return (
     <div style={{ width, height, position: 'relative' }}>
@@ -292,13 +396,40 @@ export function GlobeMap({
         <div className={classes.globeMapBounceCardsContainer}>
           <BounceCards
             className={classes.globeMapBounceCards}
-            images={selectedMarker.images || defaultImages}
+            images={getRandomImages(selectedMarker.images || defaultImages)}
             containerWidth={500}
             containerHeight={250}
             animationDelay={0.2}
             animationStagger={0.08}
             transformStyles={defaultTransformStyles}
             enableHover={true}
+            onImageClick={handleImageClick}
+          />
+        </div>
+      )}
+
+      {/* Fullscreen Modal */}
+      {selectedImage && (
+        <div className={classes.modal} onClick={handleModalClick}>
+          <div className={classes.closeButton} onClick={handleCloseClick}>
+            ×
+          </div>
+          <div 
+            className={`${classes.navButton} prev`} 
+            onClick={handlePrevImage}
+          >
+            ‹
+          </div>
+          <div 
+            className={`${classes.navButton} next`} 
+            onClick={handleNextImage}
+          >
+            ›
+          </div>
+          <img 
+            className={classes.modalImage} 
+            src={selectedImage} 
+            alt="Fullscreen view" 
           />
         </div>
       )}

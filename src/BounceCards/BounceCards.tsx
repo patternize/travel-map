@@ -18,7 +18,8 @@ const useStyles = createUseStyles({
     border: '5px solid #fff',
     borderRadius: 25,
     overflow: 'hidden',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)'
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+    cursor: 'pointer'
   },
   image: {
     width: '100%',
@@ -38,6 +39,7 @@ export interface BounceCardsProps {
   transformStyles?: string[];
   enableHover?: boolean;
   cardSize?: number;
+  onImageClick?: (src: string) => void;
 }
 
 export default function BounceCards({
@@ -56,7 +58,8 @@ export default function BounceCards({
     'rotate(2deg) translate(170px)'
   ],
   enableHover = true,
-  cardSize = 200
+  cardSize = 200,
+  onImageClick
 }: BounceCardsProps) {
   const classes = useStyles();
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -154,6 +157,12 @@ export default function BounceCards({
     });
   };
 
+  const handleCardClick = (src: string) => {
+    if (onImageClick) {
+      onImageClick(src);
+    }
+  };
+
   return (
     <div
       className={`${classes.bounceCardsContainer} ${className}`}
@@ -178,6 +187,7 @@ export default function BounceCards({
           }}
           onMouseEnter={() => pushSiblings(idx)}
           onMouseLeave={resetSiblings}
+          onClick={() => handleCardClick(src)}
         >
           <img className={classes.image} src={src} alt={`card-${idx}`} />
         </div>
